@@ -1,28 +1,45 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { createAction, getType, createStandardAction } from "typesafe-actions";
+import "./App.css";
+import { useTypesafeReducer } from "./useTypesafeReducer";
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+const Actions = {
+  increment: createAction("INCR"),
+  decrement: createAction("DECR"),
+  reset: createAction("RESET"),
+  setValue: createStandardAction("SET")<number>()
+};
+
+type State = { counter: number };
+
+function App() {
+  // So, removing the type args will send the tsc into some endless loop
+  const [state, actions] = useTypesafeReducer<State, typeof Actions>(
+    (s, a) => {
+      switch (a.type) {
+        case getType(Actions.increment):
+          return { counter: s.counter + 1 };
+        case getType(Actions.decrement):
+          return { counter: s.counter - 1 };
+        case getType(Actions.reset):
+          return { counter: 0 };
+        case getType(Actions.setValue):
+          return { counter: a.payload };
+      }
+    },
+    { counter: 0 },
+    Actions
+  );
+
+  return (
+    <>
+      <p>Hello, counter is {state.counter}</p>
+      <button onClick={actions.increment}>Increment</button>
+      <button onClick={actions.decrement}>Decrement</button>
+      <button onClick={actions.reset}>Reset</button>
+      <button onClick={() => actions.setValue(7)}>Put in the number 7</button>
+    </>
+  );
 }
 
 export default App;
