@@ -1,5 +1,5 @@
 import React from "react";
-import { createAction, getType, createStandardAction } from "typesafe-actions";
+import { createAction, getType, createStandardAction, ActionType } from "typesafe-actions";
 import "./App.css";
 import { useTypesafeReducer } from "./useTypesafeReducer";
 
@@ -12,24 +12,22 @@ const Actions = {
 
 type State = { counter: number };
 
+const reducer = (s: State, a: ActionType<typeof Actions>) => {
+  switch (a.type) {
+    case getType(Actions.increment):
+      return { counter: s.counter + 1 };
+    case getType(Actions.decrement):
+      return { counter: s.counter - 1 };
+    case getType(Actions.reset):
+      return { counter: 0 };
+    case getType(Actions.setValue):
+      return { counter: a.payload };
+  }
+};
+
 function App() {
-  // So, removing the type args will send the tsc into some endless loop
-  const [state, actions] = useTypesafeReducer<State, typeof Actions>(
-    (s, a) => {
-      switch (a.type) {
-        case getType(Actions.increment):
-          return { counter: s.counter + 1 };
-        case getType(Actions.decrement):
-          return { counter: s.counter - 1 };
-        case getType(Actions.reset):
-          return { counter: 0 };
-        case getType(Actions.setValue):
-          return { counter: a.payload };
-      }
-    },
-    { counter: 0 },
-    Actions
-  );
+
+  const [state, actions] = useTypesafeReducer<State, typeof Actions>(reducer, { counter: 0 }, Actions);
 
   return (
     <>
