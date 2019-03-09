@@ -14,7 +14,7 @@ type State = { counter: number };
 
 function App() {
   // So, removing the type args will send the tsc into some endless loop
-  const [state, actions] = useTypesafeReducer<State, typeof Actions>(
+  const [state, actions] = useTypesafeReducer(
     (s, a) => {
       switch (a.type) {
         case getType(Actions.increment):
