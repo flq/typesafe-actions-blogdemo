@@ -31,11 +31,11 @@ function App() {
 
   return (
     <>
-      <p>Hello, counter is {state.counter}</p>
       <button onClick={actions.increment}>Increment</button>
       <button onClick={actions.decrement}>Decrement</button>
       <button onClick={actions.reset}>Reset</button>
       <button onClick={() => actions.setValue(7)}>Put in the number 7</button>
+      <h2>Counter is {state.counter}</h2>
     </>
   );
 }
